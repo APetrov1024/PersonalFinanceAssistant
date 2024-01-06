@@ -1,0 +1,9 @@
+﻿using Xunit;
+
+namespace PersonalFinanceAssistant.EntityFrameworkCore;
+
+[CollectionDefinition(PersonalFinanceAssistantTestConsts.CollectionDefinitionName)]
+public class PersonalFinanceAssistantEntityFrameworkCoreCollection : ICollectionFixture<PersonalFinanceAssistantEntityFrameworkCoreFixture>
+{
+
+}
