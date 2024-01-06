@@ -45,10 +45,7 @@
   </ItemGroup>
 
   <ItemGroup>
-	<PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic" Version="8.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\..\Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic\Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic.csproj" />
     <ProjectReference Include="..\PersonalFinanceAssistant.Application\PersonalFinanceAssistant.Application.csproj" />
     <ProjectReference Include="..\PersonalFinanceAssistant.HttpApi\PersonalFinanceAssistant.HttpApi.csproj" />
     <ProjectReference Include="..\PersonalFinanceAssistant.EntityFrameworkCore\PersonalFinanceAssistant.EntityFrameworkCore.csproj" />
