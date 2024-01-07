@@ -13,7 +13,7 @@ namespace PersonalFinanceAssistant.FinanceAccounts
         public string Name { get; set; } = string.Empty;
         public decimal Value { get; set; }
         public Guid OwnerId { get; set; }
-        public IdentityUser Owner { get; set; }
+        public IdentityUser? Owner { get; set; }
         public bool IsDefault { get; set; }
     }
 }
