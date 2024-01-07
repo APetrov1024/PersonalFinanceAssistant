@@ -1,4 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PersonalFinanceAssistant.FinanceAccounts;
+using PersonalFinanceAssistant.FinanceOperations;
+using PersonalFinanceAssistant.Goods;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.Data;
@@ -53,6 +56,12 @@ public class PersonalFinanceAssistantDbContext :
 
     #endregion
 
+    public DbSet<Good> Goods { get; set; }
+    public DbSet<GoodCategory> GoodCategories { get; set; }
+    public DbSet<FinanceAccount> FinanceAccounts { get; set; }
+    public DbSet<FinanceOperation> FinanceOperations { get; set; }
+
+
     public PersonalFinanceAssistantDbContext(DbContextOptions<PersonalFinanceAssistantDbContext> options)
         : base(options)
     {
@@ -82,5 +91,37 @@ public class PersonalFinanceAssistantDbContext :
         //    b.ConfigureByConvention(); //auto configure for the base class props
         //    //...
         //});
+
+        builder.Entity<Good>(b =>
+        {
+            b.ToTable("Goods");
+            b.Property(x => x.Name).HasMaxLength(GoodConsts.MaxNameLength).IsRequired();
+            b.HasOne(x => x.Category).WithMany(x => x.Goods).HasForeignKey(x => x.CategoryId).IsRequired(false).OnDelete(DeleteBehavior.NoAction);
+            b.HasOne(x => x.Owner).WithMany().HasForeignKey(x => x.OwnerId).IsRequired().OnDelete(DeleteBehavior.NoAction);
+        });
+
+        builder.Entity<GoodCategory>(b =>
+        {
+            b.ToTable("GoodCategories");
+            b.Property(x => x.Name).HasMaxLength(GoodCategoryConsts.MaxNameLength).IsRequired();
+            b.HasOne(x => x.Owner).WithMany().HasForeignKey(x => x.OwnerId).IsRequired().OnDelete(DeleteBehavior.NoAction);
+            b.HasOne(x => x.ParentCategory).WithMany(x => x.ChildCategories).HasForeignKey(x => x.ParentCategoryId).IsRequired(false).OnDelete(DeleteBehavior.NoAction);
+        });
+
+        builder.Entity<FinanceAccount>(b =>
+        {
+            b.ToTable("FinanceAccounts");
+            b.Property(x => x.Name).HasMaxLength(FinanceAccountConsts.MaxNameLength).IsRequired();
+            b.HasOne(x => x.Owner).WithMany().HasForeignKey(x => x.OwnerId).IsRequired().OnDelete(DeleteBehavior.NoAction);
+        });
+
+        builder.Entity<FinanceOperation>(b =>
+        {
+            b.ToTable("FinanceOperations");
+            b.Property(x => x.Comment).HasMaxLength(FinanceOperationConsts.MaxCommentLength).IsRequired(false);
+            b.HasOne(x => x.Owner).WithMany().HasForeignKey(x => x.OwnerId).IsRequired().OnDelete(DeleteBehavior.NoAction);
+            b.HasOne(x => x.FinanceAccount).WithMany().HasForeignKey(x => x.FinanceAccountId).IsRequired().OnDelete(DeleteBehavior.NoAction);
+            b.HasOne(x => x.Good).WithMany().HasForeignKey(x => x.GoodId).IsRequired(false).OnDelete(DeleteBehavior.NoAction);
+        });
     }
 }
