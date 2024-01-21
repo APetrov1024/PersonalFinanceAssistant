@@ -41,6 +41,8 @@ using Volo.Abp.UI.Navigation;
 using Volo.Abp.VirtualFileSystem;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Pages.Shared.Components.AbpApplicationPath;
 using Volo.Abp.Ui.LayoutHooks;
+using Volo.Abp.AspNetCore.Mvc.Conventions;
+using System.Net.WebSockets;
 
 namespace PersonalFinanceAssistant.Web;
 
@@ -196,7 +198,14 @@ public class PersonalFinanceAssistantWebModule : AbpModule
     {
         Configure<AbpAspNetCoreMvcOptions>(options =>
         {
-            options.ConventionalControllers.Create(typeof(PersonalFinanceAssistantApplicationModule).Assembly);
+            options.ConventionalControllers.Create(typeof(PersonalFinanceAssistantApplicationModule).Assembly, opts =>
+            {
+                opts.UrlActionNameNormalizer = (context) =>
+                {
+                    // чтобы GetList с параметром отличался от Get
+                    return context.Action.ActionName.ToLower() == "getlist" ? "list" : context.ActionNameInUrl;
+                };
+            });
         });
     }
 
