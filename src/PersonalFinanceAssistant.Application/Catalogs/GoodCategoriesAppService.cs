@@ -24,10 +24,10 @@ namespace PersonalFinanceAssistant.Catalogs
             return ObjectMapper.Map<GoodCategory, GoodCategoryDto>(category);
         }
 
-        public async Task<List<GoodCategoryDto>> GetListAsync(int? parentId)
+        public async Task<List<GoodCategoryDto>> GetListAsync(GoodCategoriesListRequestDto dto)
         {
             var query = (await _goodCategoriesRepository.GetQueryableAsync(withDetails: false, noTracking: true))
-                .Where(x => x.ParentCategoryId == parentId);
+                .Where(x => x.ParentCategoryId == dto.ParentId);
             var categories = await AsyncExecuter.ToListAsync(query);
             return ObjectMapper.Map<List<GoodCategory>, List<GoodCategoryDto>>(categories);
         }
@@ -36,6 +36,7 @@ namespace PersonalFinanceAssistant.Catalogs
         { 
             ValidateCreateUpdateDto(dto);
             var category = ObjectMapper.Map<CreateUpdateGoodCategoryDto, GoodCategory>(dto);
+            category.OwnerId = CurrentUser.Id.Value;
             category = await _goodCategoriesRepository.InsertAsync(category);
             return ObjectMapper.Map<GoodCategory, GoodCategoryDto>(category);
         }
