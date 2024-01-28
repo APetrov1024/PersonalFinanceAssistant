@@ -8,7 +8,7 @@ namespace PersonalFinanceAssistant.Catalogs.Goods
     public interface IGoodsAppService
     {
         Task<GoodDto> GetAsync(int id);
-        Task<List<GoodDto>> GetListAsync(int? categoryId);
+        Task<List<GoodDto>> GetListAsync(GoodsListRequestDto dto);
         Task<GoodDto> CreateAsync(CreateUpdateGoodDto dto);
         Task<GoodDto> UpdateAsync(int id, CreateUpdateGoodDto dto);
         Task DeleteAsync(int id);

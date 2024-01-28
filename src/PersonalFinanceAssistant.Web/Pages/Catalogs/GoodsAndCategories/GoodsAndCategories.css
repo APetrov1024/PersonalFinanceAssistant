@@ -1,0 +1,12 @@
+﻿
+
+.panel {
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    padding: 0;
+}
+
+.panel-header {
+    border-bottom: 1px solid lightgray;
+    padding: 3px;
+}

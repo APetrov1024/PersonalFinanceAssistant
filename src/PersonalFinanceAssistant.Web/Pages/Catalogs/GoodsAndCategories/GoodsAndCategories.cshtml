@@ -1,0 +1,49 @@
+﻿@page
+@using PersonalFinanceAssistant.Web
+@model PersonalFinanceAssistant.Web.Pages.Catalogs.GoodAndCategories.GoodsAndCategoriesModel
+@{
+}
+
+@section styles {
+    <abp-style-bundle name="@PersonalFinanceAssistantBundles.Styles.TabulatorExtended"></abp-style-bundle>
+    <abp-style src="/Pages/Catalogs/GoodsAndCategories/GoodsAndCategories.css"></abp-style>
+}
+@section scripts {
+    <abp-script-bundle name="@PersonalFinanceAssistantBundles.Scripts.TabulatorExtended"></abp-script-bundle>
+    <abp-script src="/js/BusyManager.js" />
+    <abp-script src="/Pages/Catalogs/GoodsAndCategories/EditGoodModal.js" />
+    <abp-script src="/Pages/Catalogs/GoodsAndCategories/EditCategoryModal.js" />
+    <abp-script src="/Pages/Catalogs/GoodsAndCategories/GoodsAndCategories.js" />
+}
+
+@section page_header
+{
+    Товары и категории
+}
+
+@section content_toolbar
+{
+  
+}
+
+
+<div class="row">
+    <div class="col-4 panel">
+        <div class="categories-panel-header panel-header d-flex justify-content-between">
+            <h5>Категории</h5>
+            <div class="categories-toolbar d-flex justify-content-end mx-2">
+                <button class="btn btn-primary btn-sm add-category-btn" type="button"><i class="fas fa-plus"></i> Новая категория</button>
+            </div>
+        </div>
+        <div class="categories-table tabulator-hidden-header"></div>
+    </div>
+    <div class="col-8 panel">
+        <div class="goods-panel-header panel-header d-flex justify-content-between">
+            <h5>Товары</h5>
+            <div class="goods-toolbar d-flex justify-content-end mx-2">
+                <button class="btn btn-primary btn-sm add-good-btn" type="button"><i class="fas fa-plus"></i> Новый товар</button>
+            </div>
+        </div>
+        <div class="goods-table"></div>
+    </div>
+</div>

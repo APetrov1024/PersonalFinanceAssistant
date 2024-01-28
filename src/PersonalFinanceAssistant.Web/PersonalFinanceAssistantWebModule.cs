@@ -160,6 +160,22 @@ public class PersonalFinanceAssistantWebModule : AbpModule
                     bundle.AddFiles("/global-scripts.js");
                 }
             );
+            options.StyleBundles.Add(
+               PersonalFinanceAssistantBundles.Styles.TabulatorExtended,
+               bundle =>
+               {
+                   bundle.AddFiles("/css/TabulatorExtensions.css");
+                   bundle.AddFiles("/libs/tabulator-tables/css/tabulator.min.css");
+               }
+           );
+            options.ScriptBundles.Add(
+                PersonalFinanceAssistantBundles.Scripts.TabulatorExtended,
+                bundle =>
+                {
+                    bundle.AddFiles("/js/TabulatorExtensions.js");
+                    bundle.AddFiles("/libs/tabulator-tables/js/tabulator.min.js");
+                }
+            );
         });
     }
 

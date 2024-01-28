@@ -7,4 +7,12 @@ public class PersonalFinanceAssistantMenus
 
     //Add your menu items here...
 
+    public static class Catalogs
+    {
+        public const string Group = Prefix + ".Catalogs";
+        public const string GoodsAndCategories = Group + ".GoodsAndCategories";
+    }
+
+
+
 }

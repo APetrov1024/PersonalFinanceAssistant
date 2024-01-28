@@ -1,0 +1,14 @@
+﻿@page
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@model PersonalFinanceAssistant.Web.Pages.Catalogs.GoodsAndCategories.EditCategoryModalModel
+@{
+    Layout = null;
+}
+
+<abp-modal>
+    <abp-modal-header title="@Model.VM.ModalCaption"></abp-modal-header>
+    <abp-modal-body>
+        <abp-input asp-for="@Model.VM.Name"></abp-input>
+    </abp-modal-body>
+    <abp-modal-footer buttons="@AbpModalButtons.Save | @AbpModalButtons.Cancel"></abp-modal-footer>
+</abp-modal>
