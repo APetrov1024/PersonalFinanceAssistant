@@ -3,6 +3,7 @@
 const busyManager = new BusyManager();
 
 let selectedCategoryId = null;
+let selectedRow = null;
 
 const goodsTable = new Tabulator('.goods-table', {
     height: getTableHeight(),
@@ -26,7 +27,10 @@ const categoriesTable = new Tabulator('.categories-table', {
     height: getTableHeight(),
     layout: 'fitColumns',
     dataTree: true,
+    dataTreeChildIndent: 25,
     columns: [
+        //{ width: 150 }, // branch element
+        { field: 'name',  },
         new ToolsColumn(
             [
                 { btnClass: 'btn-edit', iconClass: 'fas fa-edit', condition: (cell) => cell.getData().id != null, },
@@ -40,7 +44,7 @@ const categoriesTable = new Tabulator('.categories-table', {
                 width: '10em',
             }
         ),
-        { field: 'name',  },
+        
     ],
 })
 
@@ -57,38 +61,62 @@ window.addEventListener('resize', function (event) {
 
 categoriesTable.on('rowClick', function (e, row) {
     if (e.target.closest('button')) return;
-    let selectedRow = categoriesTable.getRows().find(x => x.getData().id === selectedCategoryId);
+    selectCategoryRow(row);
+})
+
+function selectCategoryRow(row) {
+    let selectedRow = categoriesTable.getSelectedRows()[0];
     if (selectedRow != row) {
-        selectedRow.deselect();
+        if (selectedRow) selectedRow.deselect();
         row.select();
     }
-})
+}
+
+categoriesTable.on("dataTreeRowExpanded", async function (row, level) {
+    selectCategoryRow(row);
+    let data = row.getData();
+    if (data._children.length > 0) return;
+    let parentId = row.getData().id;
+    var subs = await loadCategories(parentId, false);
+    subs.forEach(x => {
+        row.addTreeChild(x);
+    });
+});
 
 categoriesTable.on("rowSelected", function (row) {
     selectedCategoryId = row.getData().id;
+    selectedRow = row;
 });
 
 categoriesTable.on('tableBuilt', async function () {
-    await categoriesTable.setData(await loadCategories(null));
-    categoriesTable.getRows().find(x => x.getData().id === selectedCategoryId).select();
+    await categoriesTable.setData(await loadCategories(null, true));
+    selectEmptyCategory();
 })
+
+function selectEmptyCategory() {
+    let emptyCategoryRow = categoriesTable.getRows().find(x => x.getData().id == null );
+    selectCategoryRow(emptyCategoryRow);
+}
 
 goodsTable.on('tableBuilt', async function () {
     goodsTable.setData(await loadGoods(null));
 })
 
-async function loadCategories(parentId) {
+async function loadCategories(parentId, addEmpty) {
     busyManager.startOperation();
-    var result = await personalFinanceAssistant.catalogs.goodCategories.getList({ parentId: parentId })
+    let result = await personalFinanceAssistant.catalogs.goodCategories.getList({ parentId: parentId })
         .catch(err => handleError(err));
     busyManager.endOperation();
-    result.unshift({ id: null, name: 'Без категории'});
+    result.forEach(x => {
+        if (x.hasChilds) x._children = [];
+    })
+    if (addEmpty) result.unshift({ id: null, name: 'Без категории'});
     return result;
 }
 
 async function loadGoods(categoryId) {
     busyManager.startOperation();
-    var result = await personalFinanceAssistant.catalogs.goods.getList({ categoryId: categoryId })
+    let result = await personalFinanceAssistant.catalogs.goods.getList({ categoryId: categoryId })
         .catch(err => handleError(err));
     busyManager.endOperation();
     return result;
@@ -110,24 +138,28 @@ const editCategoryModal = commonEditModal({
 });
 
 document.querySelector('.add-category-btn').addEventListener('click', function () {
-    editCategoryModal.open();
+    editCategoryModal.open({ parentCategoryId: selectedCategoryId });
 })
 
 categoriesTable.on("rowDblClick", function (e, row) {
-    editCategoryModal.open({ id: row.getData().id });
+    let data = row.getData();
+    editCategoryModal.open({ id: data.id, parentCategoryId: data.parentCategoryId });
 });
 
 function editCategoryClicked(cell) {
-    editCategoryModal.open({ id: cell.getRow().getData().id });
+    let data = cell.getRow().getData();
+    editCategoryModal.open({ id: data.id, parentCategoryId: data.parentCategoryId });
 }
 
 async function deleteCategoryClicked(cell) {
     if (await abp.message.confirm('', 'Вы уверены?')) {
         busyManager.startOperation();
-        let id = cell.getRow().getData().id;
+        let row = cell.getRow();
+        let id = row.getData().id;
         personalFinanceAssistant.catalogs.goodCategories.delete(id)
             .then(() => {
-                categoriesTable.deleteRow(id);
+                selectEmptyCategory();
+                row.delete();
                 abp.notify.success('Категория удалена');
                 busyManager.endOperation()
             })
@@ -139,7 +171,31 @@ async function deleteCategoryClicked(cell) {
 }
 
 editCategoryModal.onResult(function (result) {
-    categoriesTable.updateOrAddRow(result.id, result);
+    let response = result.response;
+    if (!response.parentCategoryId) {
+        categoriesTable.updateOrAddRow(response.id, response);
+    }
+    else {
+        if (result.action === 'update') {
+            let affectedRow;
+            if (selectedRow.getData().id == response.id) {
+                affectedRow = selectedRow;
+            }
+            else {
+                affectedRow = selectedRow.getTreeChildren().find(x => x.getData().id == response.id);
+            }
+            // костыль: похоже на баг табулятора. табулятор пытается обратиться к вложенным строкам (зачем?), а их нет
+            //TODO хорошо бы разобраться что именно происходит в табуляторе и если это баг, то отправить репорт
+            let hasNoChilds = !affectedRow.getData()._children
+            if (hasNoChilds) affectedRow.addTreeChild({});
+            affectedRow.update(response);
+            if (hasNoChilds) affectedRow.getTreeChildren()[0].delete();
+        }
+        if (result.action === 'create') {
+            selectedRow.addTreeChild(response);
+            selectedRow.treeExpand();
+        }
+    }
 })
 
 

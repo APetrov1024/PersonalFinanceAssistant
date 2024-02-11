@@ -13,6 +13,8 @@ namespace PersonalFinanceAssistant.Catalogs
         public GoodCategoriesAutoMapperProfile()
         {
             CreateMap<GoodCategory, GoodCategoryDto>();
+            CreateMap<GoodCategory, GoodCategoryListItemDto>()
+                .ForMember(x => x.HasChilds, map => map.MapFrom(src => ValueOrDefault(src, "ChildCategories.Count", 0) > 0));
             CreateMap<CreateUpdateGoodCategoryDto, GoodCategory>();
         }
     }

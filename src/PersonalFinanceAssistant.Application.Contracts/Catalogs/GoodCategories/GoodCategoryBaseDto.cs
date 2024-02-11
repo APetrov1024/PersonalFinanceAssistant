@@ -5,8 +5,10 @@ using Volo.Abp.Application.Dtos;
 
 namespace PersonalFinanceAssistant.Catalogs.GoodCategories
 {
-    public class GoodCategoryDto: GoodCategoryBaseDto
+    public abstract class GoodCategoryBaseDto:EntityDto<int>
     {
-
+        public string Name { get; set; } = string.Empty;
+        public int? ParentCategoryId { get; set; }
     }
+
 }

@@ -5,8 +5,8 @@ using Volo.Abp.Application.Dtos;
 
 namespace PersonalFinanceAssistant.Catalogs.GoodCategories
 {
-    public class GoodCategoryDto: GoodCategoryBaseDto
+    public class GoodCategoryListItemDto: GoodCategoryBaseDto
     {
-
+        public bool HasChilds { get; set; }
     }
 }

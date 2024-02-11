@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp;
+using Volo.Abp.ObjectMapping;
 
 namespace PersonalFinanceAssistant.Catalogs
 {
@@ -24,12 +25,26 @@ namespace PersonalFinanceAssistant.Catalogs
             return ObjectMapper.Map<GoodCategory, GoodCategoryDto>(category);
         }
 
-        public async Task<List<GoodCategoryDto>> GetListAsync(GoodCategoriesListRequestDto dto)
+        public async Task<List<GoodCategoryListItemDto>> GetListAsync(GoodCategoriesListRequestDto dto)
         {
             var query = (await _goodCategoriesRepository.GetQueryableAsync(withDetails: false, noTracking: true))
-                .Where(x => x.ParentCategoryId == dto.ParentId);
+                .Where(x => x.ParentCategoryId == dto.ParentId)
+                .Select(x => new 
+                { 
+                    Category = x, 
+                    HasChild = x.ChildCategories.Count() > 0
+                })
+                .OrderBy(x => x.Category.Name);
             var categories = await AsyncExecuter.ToListAsync(query);
-            return ObjectMapper.Map<List<GoodCategory>, List<GoodCategoryDto>>(categories);
+            var result = new List<GoodCategoryListItemDto>();
+            foreach (var category in categories)
+            {
+                var resultItem = ObjectMapper.Map<GoodCategory, GoodCategoryListItemDto>(category.Category);
+                resultItem.HasChilds = category.HasChild;
+                result.Add(resultItem);
+            }
+            var foo = result.Where(x => x.HasChilds).ToList();
+            return result;
         }
 
         public async Task<GoodCategoryDto> CreateAsync(CreateUpdateGoodCategoryDto dto)
@@ -37,7 +52,7 @@ namespace PersonalFinanceAssistant.Catalogs
             ValidateCreateUpdateDto(dto);
             var category = ObjectMapper.Map<CreateUpdateGoodCategoryDto, GoodCategory>(dto);
             category.OwnerId = CurrentUser.Id.Value;
-            category = await _goodCategoriesRepository.InsertAsync(category);
+            category = await _goodCategoriesRepository.InsertAsync(category, autoSave: true);
             return ObjectMapper.Map<GoodCategory, GoodCategoryDto>(category);
         }
 
