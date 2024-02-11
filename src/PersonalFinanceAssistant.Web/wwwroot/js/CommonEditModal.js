@@ -39,29 +39,33 @@ const commonEditModal = function (params) {
         const dto = collectData(modalManager, args);
         const busyManager = new BusyManager(); 
         busyManager.startOperation();
-        let isSuccess = true;
-        let response;
         const onError = (err) => {
             handleError(err);
             isSuccess = false;
             busyManager.endOperation();
         };
         if (args.id) {
-            response = await updateMethod(args.id, dto)
+            await updateMethod(args.id, dto)
+                .then(response => {
+                    onDataSubmited(response, 'update', modalManager);
+                })
                 .catch(err => onError(err));
         }
         else {
-            response = await createMethod(dto)
+            await createMethod(dto)
+                .then(response => {
+                    onDataSubmited(response, 'create', modalManager);
+                })
                 .catch(err => onError(err));
-        }
-        if (isSuccess) {
-            onDataSubmited(response, modalManager);
         }
     }
 
-    function onDataSubmited(result, modalManager) {
+    function onDataSubmited(response, action, modalManager) {
         abp.notify.success('Данные сохранены');
-        modalManager.setResult(result);
+        modalManager.setResult({
+            response: response,
+            action: action,
+        });
         const busyManager = new BusyManager(); 
         busyManager.endOperation();
         modalManager.close();
