@@ -26,7 +26,7 @@ namespace PersonalFinanceAssistant.Repositories
             {
                 query = query.AsNoTracking();
             }
-            //query = query.Include(x => x.Property);
+            query = query.Include(x => x.Currency);
             return query;
         }
     }

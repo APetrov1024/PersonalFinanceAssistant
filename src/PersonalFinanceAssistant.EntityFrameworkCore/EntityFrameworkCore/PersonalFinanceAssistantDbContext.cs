@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PersonalFinanceAssistant.Currencies;
 using PersonalFinanceAssistant.FinanceAccounts;
 using PersonalFinanceAssistant.FinanceOperations;
 using PersonalFinanceAssistant.Goods;
@@ -60,6 +61,7 @@ public class PersonalFinanceAssistantDbContext :
     public DbSet<GoodCategory> GoodCategories { get; set; }
     public DbSet<FinanceAccount> FinanceAccounts { get; set; }
     public DbSet<FinanceOperation> FinanceOperations { get; set; }
+    public DbSet<Currency> Currencies { get; set; }
 
 
     public PersonalFinanceAssistantDbContext(DbContextOptions<PersonalFinanceAssistantDbContext> options)
@@ -113,6 +115,7 @@ public class PersonalFinanceAssistantDbContext :
             b.ToTable("FinanceAccounts");
             b.Property(x => x.Name).HasMaxLength(FinanceAccountConsts.MaxNameLength).IsRequired();
             b.HasOne(x => x.Owner).WithMany().HasForeignKey(x => x.OwnerId).IsRequired().OnDelete(DeleteBehavior.NoAction);
+            b.HasOne(x => x.Currency).WithMany().HasForeignKey(x => x.CurrencyId).IsRequired().OnDelete(DeleteBehavior.NoAction);
         });
 
         builder.Entity<FinanceOperation>(b =>
@@ -122,6 +125,15 @@ public class PersonalFinanceAssistantDbContext :
             b.HasOne(x => x.Owner).WithMany().HasForeignKey(x => x.OwnerId).IsRequired().OnDelete(DeleteBehavior.NoAction);
             b.HasOne(x => x.FinanceAccount).WithMany().HasForeignKey(x => x.FinanceAccountId).IsRequired().OnDelete(DeleteBehavior.NoAction);
             b.HasOne(x => x.Good).WithMany().HasForeignKey(x => x.GoodId).IsRequired(false).OnDelete(DeleteBehavior.NoAction);
+        });
+
+        builder.Entity<Currency>(b =>
+        {
+            b.ToTable("Currencies");
+            b.Property(x => x.Name).HasMaxLength(CurrencyConsts.MaxNameLength).IsRequired(true);
+            b.Property(x => x.Alpha3Code).HasMaxLength(CurrencyConsts.MaxAlpha3CodeLength).IsRequired(true);
+            b.HasIndex(x => x.Name).IsUnique().HasDatabaseName("UX_Currencies_Name");
+            b.HasIndex(x => x.Alpha3Code).IsUnique().HasDatabaseName("UX_Currencies_Alpha3Code");
         });
     }
 }

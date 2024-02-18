@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PersonalFinanceAssistant.Currencies;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,5 +16,7 @@ namespace PersonalFinanceAssistant.FinanceAccounts
         public Guid OwnerId { get; set; }
         public IdentityUser? Owner { get; set; }
         public bool IsDefault { get; set; }
+        public int CurrencyId { get; set; }
+        public Currency Currency { get; set; }
     }
 }
