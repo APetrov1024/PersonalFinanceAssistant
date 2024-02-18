@@ -9,6 +9,7 @@ const goodsTable = new Tabulator('.goods-table', {
     height: getTableHeight(),
     layout: 'fitColumns',
     columns: [
+        { field: 'name', title: 'Наименование' },
         new ToolsColumn(
             [
                 { btnClass: 'btn-edit', iconClass: 'fas fa-edit' },
@@ -17,9 +18,11 @@ const goodsTable = new Tabulator('.goods-table', {
             {
                 'btn-edit': editGoodClicked,
                 'btn-delete': deleteGoodClicked
+            },
+            {
+                width: '5em',
             }
         ),
-        { field: 'name', title: 'Наименование' },
     ],
 })
 
@@ -83,9 +86,10 @@ categoriesTable.on("dataTreeRowExpanded", async function (row, level) {
     });
 });
 
-categoriesTable.on("rowSelected", function (row) {
+categoriesTable.on("rowSelected", async function (row) {
     selectedCategoryId = row.getData().id;
     selectedRow = row;
+    goodsTable.setData(await loadGoods(selectedCategoryId));
 });
 
 categoriesTable.on('tableBuilt', async function () {
@@ -99,7 +103,7 @@ function selectEmptyCategory() {
 }
 
 goodsTable.on('tableBuilt', async function () {
-    goodsTable.setData(await loadGoods(null));
+    goodsTable.setData(await loadGoods(selectedCategoryId));
 })
 
 async function loadCategories(parentId, addEmpty) {
@@ -207,19 +211,18 @@ const editGoodModal = commonEditModal({
         const $modal = modalManager.getModal();
         const dto = {
             name: $modal.find('#VM_Name').val(),
-            parentCategoryId: args.parentCategoryId,
+            categoryId: args.categoryId,
         };
-        debugger;
         return dto;
     },
 });
 
 document.querySelector('.add-good-btn').addEventListener('click', function () {
-    editGoodModal.open();
+    editGoodModal.open({ categoryId: selectedCategoryId });
 })
 
 goodsTable.on("rowDblClick", function (e, row) {
-    editGoodModal.open({ id: row.getData().id });
+    editGoodModal.open({ id: row.getData().id, categoryId: selectedCategoryId });
 });
 
 function editGoodClicked(cell) {
@@ -242,3 +245,8 @@ async function deleteGoodClicked(cell) {
             });
     }
 }
+
+editGoodModal.onResult(function (result) {
+    let response = result.response;
+    goodsTable.updateOrAddRow(response.id, response);
+})
