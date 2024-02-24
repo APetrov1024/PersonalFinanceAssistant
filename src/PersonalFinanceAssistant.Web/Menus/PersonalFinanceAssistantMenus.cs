@@ -11,6 +11,7 @@ public class PersonalFinanceAssistantMenus
     {
         public const string Group = Prefix + ".Catalogs";
         public const string GoodsAndCategories = Group + ".GoodsAndCategories";
+        public const string FinanceAccounts = Group + ".FinanceAccounts";
     }
 
 

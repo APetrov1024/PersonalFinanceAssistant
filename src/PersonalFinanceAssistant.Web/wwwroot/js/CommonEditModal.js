@@ -41,7 +41,6 @@ const commonEditModal = function (params) {
         busyManager.startOperation();
         const onError = (err) => {
             handleError(err);
-            isSuccess = false;
             busyManager.endOperation();
         };
         if (args.id) {

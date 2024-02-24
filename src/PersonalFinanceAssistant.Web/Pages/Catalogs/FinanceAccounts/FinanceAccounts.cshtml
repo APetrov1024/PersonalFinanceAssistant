@@ -1,0 +1,28 @@
+﻿@page
+@using PersonalFinanceAssistant.Web
+@model PersonalFinanceAssistant.Web.Pages.Catalogs.FinanceAccounts.FinanceAccountsModel
+@{
+}
+
+@section styles {
+    <abp-style-bundle name="@PersonalFinanceAssistantBundles.Styles.TabulatorExtended"></abp-style-bundle>
+}
+@section scripts {
+    <abp-script-bundle name="@PersonalFinanceAssistantBundles.Scripts.TabulatorExtended"></abp-script-bundle>
+    <abp-script src="/js/BusyManager.js" />
+    <abp-script src="/js/CommonEditModal.js" />
+    <abp-script src="/Pages/Catalogs/FinanceAccounts/FinanceAccounts.js" />
+}
+
+@section page_header
+{
+    Счета
+}
+
+@section content_toolbar
+{
+    <button class="btn btn-primary add-account-btn" type="button"><i class="fas fa-plus"></i>Новый счет</button>
+}
+
+<div class="accounts-table"></div>
+  

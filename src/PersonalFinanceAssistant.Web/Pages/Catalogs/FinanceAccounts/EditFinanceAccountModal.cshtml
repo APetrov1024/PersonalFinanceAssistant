@@ -1,0 +1,15 @@
+﻿@page
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@model PersonalFinanceAssistant.Web.Pages.Catalogs.FinanceAccounts.EditFinanceAccountModalModel
+@{
+    Layout = null;
+}
+<abp-modal>
+    <abp-modal-header title="@Model.VM.ModalCaption"></abp-modal-header>
+    <abp-modal-body>
+        <abp-input asp-for="@Model.VM.Name"></abp-input>
+        <abp-input asp-for="@Model.VM.IsDefault"></abp-input>
+        <abp-select asp-for="@Model.VM.CurrencyId" asp-items="@Model.VM.Currencies"></abp-select>
+    </abp-modal-body>
+    <abp-modal-footer buttons="@AbpModalButtons.Save | @AbpModalButtons.Cancel"></abp-modal-footer>
+</abp-modal>

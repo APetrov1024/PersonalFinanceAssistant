@@ -70,5 +70,11 @@ public class PersonalFinanceAssistantMenuContributor : IMenuContributor
                 "~/Catalogs/GoodsAndCategories/GoodsAndCategories",
                 order: Order++
             ));
+        catalogs.AddItem(new ApplicationMenuItem(
+                PersonalFinanceAssistantMenus.Catalogs.GoodsAndCategories,
+                "Счета",
+                "~/Catalogs/FinanceAccounts/FinanceAccounts",
+                order: Order++
+            ));
     }
 }

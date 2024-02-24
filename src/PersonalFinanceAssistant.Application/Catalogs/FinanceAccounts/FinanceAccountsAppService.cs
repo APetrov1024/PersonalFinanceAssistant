@@ -38,6 +38,7 @@ namespace PersonalFinanceAssistant.Catalogs.FinanceAccounts
             var account = ObjectMapper.Map<CreateUpdateFinanceAccountDto, FinanceAccount>(dto);
             account.OwnerId = CurrentUser.Id.Value;
             account = await _financeAccountsRepository.InsertAsync(account, autoSave: true);
+            account = await _financeAccountsRepository.GetAsync(account.Id, withDetails:true);
             return ObjectMapper.Map<FinanceAccount, FinanceAccountDto>(account);
         }
 
@@ -46,7 +47,7 @@ namespace PersonalFinanceAssistant.Catalogs.FinanceAccounts
             ValidateCreateUpdateDto(dto);
             var account = await _financeAccountsRepository.GetAsync(id, withDetails: true);
             if (account.CurrencyId != dto.CurrencyId) throw new UserFriendlyException("Изменение валюты счета пока не поддерживается");
-            ObjectMapper.Map<FinanceAccount, FinanceAccountDto>(account);
+            ObjectMapper.Map(dto, account);
             await _financeAccountsRepository.UpdateAsync(account);
             return ObjectMapper.Map<FinanceAccount, FinanceAccountDto>(account);
         }
