@@ -14,12 +14,18 @@ namespace PersonalFinanceAssistant.Catalogs
         public FinanceAccountsAutoMapperProfile()
         {
             CreateMap<FinanceAccount, FinanceAccountDto>()
-                .ForMember(x => x.Name, map => map.MapFrom(src => src.IsDeleted ? $"{src.Name} (Архивный)" : src.Name))
+                .ForMember(x => x.Name, map => map.MapFrom(src => StringWithSoftDeleteMark(src, "Name", string.Empty, false, DefaultSoftDeleteMark)))
                 .ForMember(x => x.CurrencyName, map => map.MapFrom(src => ValueOrDefault(src, "Currency.Name", string.Empty)));
             CreateMap<CreateUpdateFinanceAccountDto, FinanceAccount>();
             CreateMap<FinanceAccount, SelectListItemDto<int>>()
                 .ForMember(x => x.Value, map => map.MapFrom(src => src.Id))
-                .ForMember(x => x.Text, map => map.MapFrom(src => $"{src.Name} ({ValueOrDefault(src, "Currency.Alpha3Code", string.Empty)})"));
+                .ForMember(x => x.Text, map => map.MapFrom(src => MapSelectListItemText(src)));
+        }
+
+        private string MapSelectListItemText(FinanceAccount src)
+        {
+            var name = StringWithSoftDeleteMark(src, "Name");
+            return $"{name} ({ValueOrDefault(src, "Currency.Alpha3Code", string.Empty)})";
         }
     }
 }

@@ -12,9 +12,11 @@ namespace PersonalFinanceAssistant.Catalogs
     {
         public GoodCategoriesAutoMapperProfile()
         {
-            CreateMap<GoodCategory, GoodCategoryDto>();
+            CreateMap<GoodCategory, GoodCategoryDto>()
+                .ForMember(x => x.Name, map => map.MapFrom(src => StringWithSoftDeleteMark(src, "Name", string.Empty, false, DefaultSoftDeleteMark)));
             CreateMap<GoodCategory, GoodCategoryListItemDto>()
-                .ForMember(x => x.HasChilds, map => map.MapFrom(src => ValueOrDefault(src, "ChildCategories.Count", 0) > 0));
+                .ForMember(x => x.HasChilds, map => map.MapFrom(src => ValueOrDefault(src, "ChildCategories.Count", 0) > 0))
+                .ForMember(x => x.Name, map => map.MapFrom(src => StringWithSoftDeleteMark(src, "Name", string.Empty, false, DefaultSoftDeleteMark)));
             CreateMap<CreateUpdateGoodCategoryDto, GoodCategory>();
         }
     }
