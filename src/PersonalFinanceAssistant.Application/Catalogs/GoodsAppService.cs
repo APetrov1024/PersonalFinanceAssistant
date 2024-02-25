@@ -1,4 +1,5 @@
 ﻿using PersonalFinanceAssistant.Catalogs.Goods;
+using PersonalFinanceAssistant.CommonDtos;
 using PersonalFinanceAssistant.Goods;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,12 @@ namespace PersonalFinanceAssistant.Catalogs
                 .Where(x => x.CategoryId == dto.CategoryId);
             var goods = await AsyncExecuter.ToListAsync(query);
             return ObjectMapper.Map<List<Good>, List<GoodDto>>(goods);
+        }
+
+        public async Task<List<SelectListItemDto<int>>> GetSelectListAsync()
+        {
+            var entities = await _goodsRepository.GetListAsync();
+            return ObjectMapper.Map<List<Good>, List<SelectListItemDto<int>>>(entities);
         }
 
         public async Task<GoodDto> CreateAsync(CreateUpdateGoodDto dto)

@@ -6,11 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PersonalFinanceAssistant.Catalogs.SelectLists
+namespace PersonalFinanceAssistant.Catalogs
 {
-    public class SelectListsAutoMapperProfile : PersonalFinanceAssistantApplicationAutoMapperProfile
+    public class CurrenciesAutoMapperProfile : PersonalFinanceAssistantApplicationAutoMapperProfile
     {
-        public SelectListsAutoMapperProfile()
+        public CurrenciesAutoMapperProfile()
         {
             CreateMap<Currency, SelectListItemDto<int>>()
                 .ForMember(x => x.Value, map => map.MapFrom(src => src.Id))

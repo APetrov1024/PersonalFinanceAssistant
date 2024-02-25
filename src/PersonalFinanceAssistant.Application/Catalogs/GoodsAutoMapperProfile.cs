@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using PersonalFinanceAssistant.Catalogs.Goods;
+using PersonalFinanceAssistant.CommonDtos;
 using PersonalFinanceAssistant.Goods;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,9 @@ namespace PersonalFinanceAssistant.Catalogs
                 .ForMember(x => x.CategoryName, map => map.MapFrom(src => ValueOrDefault(src, "Category.Name", string.Empty)))
                 ;
             CreateMap<CreateUpdateGoodDto, Good>();
+            CreateMap<Good, SelectListItemDto<int>>()
+               .ForMember(x => x.Value, map => map.MapFrom(src => src.Id))
+               .ForMember(x => x.Text, map => map.MapFrom(src => src.Name));
         }
 
     }

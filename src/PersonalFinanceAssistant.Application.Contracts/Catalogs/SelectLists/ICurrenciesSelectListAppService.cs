@@ -7,8 +7,8 @@ using Volo.Abp.Application.Services;
 
 namespace PersonalFinanceAssistant.Catalogs.SelectLists
 {
-    public interface ICurrenciesSelectListAppService: IApplicationService
+    public interface ICurrenciesAppService: IApplicationService
     {
-        Task<List<SelectListItemDto<int>>> GetListAsync();
+        Task<List<SelectListItemDto<int>>> GetSelectListAsync();
     }
 }

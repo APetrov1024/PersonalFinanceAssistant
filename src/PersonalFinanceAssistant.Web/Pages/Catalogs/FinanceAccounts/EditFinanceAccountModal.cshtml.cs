@@ -13,11 +13,11 @@ namespace PersonalFinanceAssistant.Web.Pages.Catalogs.FinanceAccounts
 {
     public class EditFinanceAccountModalModel : PersonalFinanceAssistantPageModel
     {
-        private readonly ICurrenciesSelectListAppService _currenciesSelectListAppService;
+        private readonly ICurrenciesAppService _currenciesSelectListAppService;
         private readonly IFinanceAccountsAppService _financeAccountsAppService;
 
         public EditFinanceAccountModalModel(
-            ICurrenciesSelectListAppService currenciesSelectListAppService,
+            ICurrenciesAppService currenciesSelectListAppService,
             IFinanceAccountsAppService financeAccountsAppService)
         {
             _currenciesSelectListAppService = currenciesSelectListAppService;
@@ -29,7 +29,7 @@ namespace PersonalFinanceAssistant.Web.Pages.Catalogs.FinanceAccounts
         public async Task OnGetAsync(int? id)
         {
             VM.ModalCaption = id.HasValue ? "Редактирование счета" : "Новый счет";
-            var currencies = await _currenciesSelectListAppService.GetListAsync();
+            var currencies = await _currenciesSelectListAppService.GetSelectListAsync();
             VM.Currencies = ObjectMapper.Map<List<SelectListItemDto<int>>, List<SelectListItem>>(currencies);
             if (id.HasValue)
             {

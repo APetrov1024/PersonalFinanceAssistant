@@ -4,12 +4,14 @@ using System.Linq;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using PersonalFinanceAssistant.Catalogs.FinanceAccounts;
+using PersonalFinanceAssistant.CommonDtos;
 using PersonalFinanceAssistant.FinanceAccounts;
 using Volo.Abp;
 using Volo.Abp.Data;
 using Volo.Abp.Domain.Repositories;
 
-namespace PersonalFinanceAssistant.Catalogs.FinanceAccounts
+namespace PersonalFinanceAssistant.Catalogs
 {
     public class FinanceAccountsAppService : PersonalFinanceAssistantAppService, IFinanceAccountsAppService
     {
@@ -32,13 +34,19 @@ namespace PersonalFinanceAssistant.Catalogs.FinanceAccounts
             return ObjectMapper.Map<List<FinanceAccount>, List<FinanceAccountDto>>(accounts);
         }
 
+        public async Task<List<SelectListItemDto<int>>> GetSelectListAsync()
+        {
+            var entities = await _financeAccountsRepository.GetListAsync(withDetails: true, noTracking: true);
+            return ObjectMapper.Map<List<FinanceAccount>, List<SelectListItemDto<int>>>(entities);
+        }
+
         public async Task<FinanceAccountDto> CreateAsync(CreateUpdateFinanceAccountDto dto)
         {
             ValidateCreateUpdateDto(dto);
             var account = ObjectMapper.Map<CreateUpdateFinanceAccountDto, FinanceAccount>(dto);
             account.OwnerId = CurrentUser.Id.Value;
             account = await _financeAccountsRepository.InsertAsync(account, autoSave: true);
-            account = await _financeAccountsRepository.GetAsync(account.Id, withDetails:true);
+            account = await _financeAccountsRepository.GetAsync(account.Id, withDetails: true);
             return ObjectMapper.Map<FinanceAccount, FinanceAccountDto>(account);
         }
 

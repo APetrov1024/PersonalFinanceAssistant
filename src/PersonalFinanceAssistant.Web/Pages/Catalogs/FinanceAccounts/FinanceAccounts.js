@@ -34,7 +34,7 @@ window.addEventListener('resize', function (event) {
 
 function accountsQuery(url, config, params) {
     return new Promise(function (resolve, reject) {
-        personalFinanceAssistant.catalogs.financeAccounts.financeAccounts.getList()
+        personalFinanceAssistant.catalogs.financeAccounts.getList()
             .done(function (result) {
                 resolve(result);
             })
@@ -47,7 +47,7 @@ async function deleteAccountClicked(cell) {
         busyManager.startOperation();
         let row = cell.getRow();
         let id = row.getData().id;
-        personalFinanceAssistant.catalogs.financeAccounts.financeAccounts.delete(id)
+        personalFinanceAssistant.catalogs.financeAccounts.delete(id)
             .then(() => {
                 row.delete();
                 abp.notify.success('Счет удален');
@@ -63,7 +63,7 @@ async function deleteAccountClicked(cell) {
 const editAccountModal = commonEditModal({
     viewUrl: abp.appPath + 'Catalogs/FinanceAccounts/EditFinanceAccountModal',
     modalClass: 'EditFinanceAccountModal',
-    appService: personalFinanceAssistant.catalogs.financeAccounts.financeAccounts,
+    appService: personalFinanceAssistant.catalogs.financeAccounts,
     collectData: function (modalManager, args) {
         const $modal = modalManager.getModal();
         const dto = {
